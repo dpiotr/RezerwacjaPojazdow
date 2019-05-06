@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
-// const { User, Blog, Tag } = require('../sequelize');
+const ClientModel = require('../sequelize').Client;
 
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get('/', function (req, res, next) {
+    res.render('index', {title: 'Express'});
 });
 
 // // create a user
@@ -14,8 +14,17 @@ router.get('/', function(req, res, next) {
 // });
 //
 // // get all users
-// router.get('/api/users', (req, res) => {
-//   User.findAll().then(users => res.json(users))
-// });
+router.get('/api/users', (req, res) => {
+    ClientModel
+        .findAll(
+            // {
+            //     where: {login: ""}
+            // }
+        )
+        .then(users => res.json(users))
+        .catch(reason => {
+
+        })
+});
 
 module.exports = router;

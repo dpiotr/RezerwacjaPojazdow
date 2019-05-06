@@ -45,8 +45,8 @@ sequelize.sync({force: true})
         Car.create({registration_no: "KR 12345", modelId: 1});
         Car.create({registration_no: "KR 12346", modelId: 1});
 
-        Client.create({name: "Adam", surname: "Nowak"});
-        Client.create({name: "Jan", surname: "Kowalski"});
+        Client.create({name: "Adam", surname: "Nowak", login: "adamnowak", password: "adamnowak"});
+        Client.create({name: "Jan", surname: "Kowalski", login: "jankowalski", password: "jankowalski"});
 
         Reservation.create({start: 100, end: 200, clientId: 1, carId: 1});
     })
