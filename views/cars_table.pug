@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    h2= title
+    table.table.table-hover
+        tbody
+            each user in users
+                tr
+                    td=user.dataValues.id
+                    td=user.dataValues.registration_no
+                    td=user.dataValues.model.dataValues.name
+                    td=user.dataValues.model.dataValues.brand.dataValues.name

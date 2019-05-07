@@ -1,10 +1,11 @@
-var express = require('express');
-var router = express.Router();
-
-const ClientModel = require('../sequelize').Client;
+let express = require('express');
+let router = express.Router();
 
 router.get('/', function (req, res, next) {
-    res.render('index', {title: 'Express'});
+    res.render('index_page', {
+        title: 'Witaj na stronie naszej wypożyczalni.',
+        description: "Aby w pełni korzystać z naszej oferty musisz się zalogować."
+    });
 });
 
 // // create a user
@@ -14,17 +15,5 @@ router.get('/', function (req, res, next) {
 // });
 //
 // // get all users
-router.get('/api/users', (req, res) => {
-    ClientModel
-        .findAll(
-            // {
-            //     where: {login: ""}
-            // }
-        )
-        .then(users => res.json(users))
-        .catch(reason => {
-
-        })
-});
 
 module.exports = router;

@@ -1,8 +1,6 @@
 extends layout
 
 block content
-    h1= title
-    p Zaloguj się aby mieć dostęp do naszej wypożyczalni.
     form(method="post", action="/auth/login")
         | Login:
         br

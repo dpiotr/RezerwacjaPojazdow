@@ -8,7 +8,7 @@ var LocalStrategy = require('passport-local').Strategy;
 
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
-var usersRouter = require('./routes/users');
+var carsRouter = require('./routes/cars');
 
 var app = express();
 
@@ -26,7 +26,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/cars', carsRouter);
 app.use('/auth', authRouter);
 
 passport.use(new LocalStrategy(
