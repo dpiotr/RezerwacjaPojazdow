@@ -28,5 +28,4 @@ router.get('/', LoginValidator, function (req, res, next) {
         })
 });
 
-
 module.exports = router;
