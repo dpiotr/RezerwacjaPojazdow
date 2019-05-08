@@ -6,7 +6,11 @@ let ClientModel = require('../sequelize').Client;
 let router = express.Router();
 
 router.get('/login', function (req, res) {
-    res.render('login_form');
+    if (req.user != null) {
+        res.render('logout_page', {login: req.user.dataValues.login});
+    } else {
+        res.render('login_form');
+    }
 });
 
 router.post('/login', passport.authenticate('local', {failureRedirect: '/auth/error'}), function (req, res) {
@@ -77,7 +81,7 @@ router.get('/error', function (req, res) {
 
 router.get('/logout', function (req, res) {
     req.logout();
-    res.redirect('/auth');
+    res.redirect('/');
 });
 
 module.exports = router;
