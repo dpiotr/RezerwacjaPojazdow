@@ -1,0 +1,8 @@
+extends layout
+
+block content
+    h2
+        | Jesteś zalogowany jako:&nbsp;
+        b= login
+    form(method="get", action="/administration/logout")
+        input(type='submit', value="Wyloguj się")

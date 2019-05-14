@@ -9,6 +9,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
 var carsRouter = require('./routes/cars');
+var administrationRouter = require('./routes/administration');
 
 var app = express();
 
@@ -28,8 +29,9 @@ app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/cars', carsRouter);
 app.use('/auth', authRouter);
+app.use('/administration', administrationRouter);
 
-passport.use(new LocalStrategy(
+passport.use('localClient', new LocalStrategy(
     {usernameField: "login", passwordField: "password"},
     function (username, password, cb) {
         let ClientModel = require('./sequelize').Client;
@@ -55,24 +57,76 @@ passport.use(new LocalStrategy(
             })
     }));
 
+passport.use('localUser', new LocalStrategy(
+    {usernameField: "login", passwordField: "password"},
+    function (username, password, cb) {
+        let UserModel = require('./sequelize').User;
+
+        UserModel
+            .findAll({
+                where: {login: username}
+            })
+            .then(users => {
+                if (users.length !== 1) {
+                    return cb(null, false);
+                }
+
+                //TODO
+                // if (user.password != password) {
+                //     return cb(null, false);
+                // }
+
+                return cb(null, users[0]);
+            })
+            .catch(reason => {
+                return cb(reason);
+            })
+    }));
+
 passport.serializeUser(function (user, cb) {
     let userId = user.dataValues.id;
-    cb(null, userId);
+    let userRole = user.dataValues.role;
+
+    let isAdmin;
+    if (userRole === "ADMIN") {
+        isAdmin = true;
+    } else {
+        isAdmin = false;
+    }
+
+    cb(null, [userId, isAdmin]);
 });
 
-passport.deserializeUser(function (id, cb) {
+passport.deserializeUser(function (userData, cb) {
     let ClientModel = require('./sequelize').Client;
+    let UserModel = require('./sequelize').User;
 
-    ClientModel
-        .findAll({
-            where: {id: id}
-        })
-        .then(users => {
-            cb(null, users[0]);
-        })
-        .catch(reason => {
-            return cb(reason);
-        })
+    let id = userData[0];
+    let isAdmin = userData[1];
+
+    if (isAdmin) {
+        UserModel
+            .findAll({
+                where: {id: id}
+            })
+            .then(users => {
+                cb(null, users[0]);
+            })
+            .catch(reason => {
+                return cb(reason);
+            })
+    } else {
+        ClientModel
+            .findAll({
+                where: {id: id}
+            })
+            .then(users => {
+                cb(null, users[0]);
+            })
+            .catch(reason => {
+                return cb(reason);
+            })
+    }
 });
 
 app.use(function (req, res, next) {

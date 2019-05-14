@@ -13,7 +13,7 @@ router.get('/login', function (req, res) {
     }
 });
 
-router.post('/login', passport.authenticate('local', {failureRedirect: '/auth/error'}), function (req, res) {
+router.post('/login', passport.authenticate('localClient', {failureRedirect: '/auth/error'}), function (req, res) {
     res.redirect('/');
 });
 

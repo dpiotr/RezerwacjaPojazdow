@@ -6,6 +6,7 @@ const ModelModel = require('./models/model');
 const CarModel = require('./models/car');
 const ClientModel = require('./models/client');
 const ReservationModel = require('./models/reservation');
+const UserModel = require('./models/user');
 
 const sequelize = new Sequelize('car_reservation', 'root', 'root', {
     host: 'localhost',
@@ -24,6 +25,7 @@ const Model = ModelModel(sequelize, Sequelize);
 const Car = CarModel(sequelize, Sequelize);
 const Client = ClientModel(sequelize, Sequelize);
 const Reservation = ReservationModel(sequelize, Sequelize);
+const User = UserModel(sequelize, Sequelize);
 
 Model.belongsTo(Brand);
 Brand.hasMany(Model);
@@ -49,6 +51,8 @@ sequelize.sync({force: true})
         Client.create({name: "Jan", surname: "Kowalski", login: "jankowalski", password: "jankowalski"});
 
         Reservation.create({start: 100, end: 200, clientId: 1, carId: 1});
+
+        User.create({login: "piotr", password: "dunaj"});
     })
     .catch(reason => console.log("Wystapil blad: " + reason.message));
 
@@ -56,5 +60,6 @@ module.exports = {
     Brand,
     Model,
     Car,
-    Client
+    Client,
+    User
 };
