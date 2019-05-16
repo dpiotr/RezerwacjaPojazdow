@@ -1,0 +1,8 @@
+extends layout
+
+block content
+    h2= title
+    h6 ID pojazdu: #{car.dataValues.id}
+    h6 Marka: #{car.dataValues.model.dataValues.brand.dataValues.name}
+    h6 Model: #{car.dataValues.model.dataValues.name}
+    h6 Numer rejestracyjny: #{car.dataValues.registration_no}

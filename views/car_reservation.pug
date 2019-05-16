@@ -1,0 +1,17 @@
+extends layout
+
+block content
+    h2= title
+    br
+    h6 Rezerwujesz pojazd #{car.dataValues.model.dataValues.brand.dataValues.name} #{car.dataValues.model.dataValues.name} o numerze rejestracyjnym #{car.dataValues.registration_no}
+    form(method="post", action="/reservation" onsubmit="return alert('aaa')")
+        | Start:
+        br
+        input(type='date', name='login')
+        br
+        | Koniec:
+        br
+        input(type='date', name='password')
+        br
+        br
+        input(type='submit', value="Rezerwuj")

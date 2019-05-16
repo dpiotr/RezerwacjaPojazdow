@@ -4,9 +4,13 @@ block content
     h2= title
     table.table.table-hover
         tbody
-            each user in users
+            each car in cars
                 tr
-                    td=user.dataValues.id
-                    td=user.dataValues.registration_no
-                    td=user.dataValues.model.dataValues.name
-                    td=user.dataValues.model.dataValues.brand.dataValues.name
+                    td=car.dataValues.id
+                    td=car.dataValues.model.dataValues.brand.dataValues.name
+                    td=car.dataValues.model.dataValues.name
+                    //td=car.dataValues.registration_no
+                    td
+                        a(href="/cars/" + car.dataValues.id) Szczegóły
+                    td
+                        a(href="/cars/" + car.dataValues.id + "/reservation") Rezerwuj
