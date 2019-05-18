@@ -1,17 +1,23 @@
 extends layout
 
 block content
+    script(src="/javascripts/reservations.js")
     h2= title
     br
-    h6 Rezerwujesz pojazd #{car.dataValues.model.dataValues.brand.dataValues.name} #{car.dataValues.model.dataValues.name} o numerze rejestracyjnym #{car.dataValues.registration_no}
-    form(method="post", action="/reservation" onsubmit="return alert('aaa')")
+    h6 Rezerwujesz pojazd #{car.dataValues.model.dataValues.brand.dataValues.name} #{car.dataValues.model.dataValues.name} o numerze rejestracyjnym #{car.dataValues.registration_no} (#{car.dataValues.price} zł/doba)
+    form(method="post", name="reservationForm" action="/reservations" onsubmit="validateReservation(); return false;")
         | Start:
         br
-        input(type='date', name='login')
+        input(type='date', id="startDate", name='startDate' onchange='dateChanged(' + car.dataValues.price + ')')
         br
         | Koniec:
         br
-        input(type='date', name='password')
+        input(type='date', id="endDate", name='endDate' onchange='dateChanged(' + car.dataValues.price + ')')
         br
         br
+        input(type='hidden', name='carId', value=car.dataValues.id)
         input(type='submit', value="Rezerwuj")
+    br
+    br
+    h6 Cena za wybrany okres:
+    input(type='text', id="price", name='price' value='Cena nieznana' disabled)

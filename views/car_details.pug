@@ -5,4 +5,7 @@ block content
     h6 ID pojazdu: #{car.dataValues.id}
     h6 Marka: #{car.dataValues.model.dataValues.brand.dataValues.name}
     h6 Model: #{car.dataValues.model.dataValues.name}
+    h6 Segment: #{car.dataValues.model.dataValues.segment}
     h6 Numer rejestracyjny: #{car.dataValues.registration_no}
+    h6 Cena za dobę: #{car.dataValues.price}
+    img(width="600px", height="350px", src=car.dataValues.image)

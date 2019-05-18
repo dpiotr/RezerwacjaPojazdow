@@ -9,7 +9,8 @@ block content
                     td=car.dataValues.id
                     td=car.dataValues.model.dataValues.brand.dataValues.name
                     td=car.dataValues.model.dataValues.name
-                    //td=car.dataValues.registration_no
+                    td
+                        img(width="215px", height="125px", src=car.dataValues.image)
                     td
                         a(href="/cars/" + car.dataValues.id) Szczegóły
                     td
