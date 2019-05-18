@@ -22,8 +22,8 @@ router.get('/', LoginValidator, function (req, res, next) {
         )
         .then(reservations => {
             let reservationsModel = reservations.map(function (reservation) {
-                    let startDate = new Date(reservation.dataValues.start * 1000);
-                    let endDate = new Date(reservation.dataValues.end * 1000);
+                    let startDate = new Date(reservation.dataValues.start);
+                    let endDate = new Date(reservation.dataValues.end);
 
                     return ReservationUtils.getReservationModel(
                         reservation.dataValues.id,
@@ -56,8 +56,8 @@ router.get('/:id([0-9]+)', LoginValidator, function (req, res, next) {
 
             let reservation = reservations[0];
 
-            let startDate = new Date(reservation.dataValues.start * 1000);
-            let endDate = new Date(reservation.dataValues.end * 1000);
+            let startDate = new Date(reservation.dataValues.start);
+            let endDate = new Date(reservation.dataValues.end);
             let carId = reservation.dataValues.carId;
             let clientId = reservation.dataValues.clientId;
             let price = reservation.dataValues.price;
@@ -109,49 +109,77 @@ router.get('/:id([0-9]+)', LoginValidator, function (req, res, next) {
         })
 });
 
-
 router.post('/', LoginValidator, function (req, res, next) {
     const oneDay = 24 * 60 * 60 * 1000;
+
+    let userId = req.user.dataValues.id;
 
     let carId = req.body.carId;
     let startDate = new Date(req.body.startDate);
     let endDate = new Date(req.body.endDate);
+    let endEndDate = new Date(endDate.getTime() + oneDay - 1);
 
     let days = Math.round(Math.abs((startDate.getTime() - endDate.getTime()) / (oneDay))) + 1;
 
-    CarsModel
+    ReservationModel
         .findAll({
-            where: {id: carId},
-            include:
-                [
-                    {
-                        model: ModelModel,
-                        include: [
-                            BrandModel
-                        ]
-                    }
-                ]
+            where: {
+                carId: carId
+            }
         })
-        .then(car => {
-            if (car.length !== 1) {
-                res.render('error_page', {message: "Nie znaleziono pojazdu o id: " + carId});
-                return;
+        .then(reservations => {
+            for (i in reservations) {
+                let r = reservations[i];
+
+                let sDate = new Date(r.dataValues.start);
+                let eDate = new Date(r.dataValues.end);
+                let eEDate = new Date(eDate.getTime() + oneDay - 1);
+
+                if (startDate.getTime() >= sDate.getTime() && startDate.getTime() <= eEDate.getTime()) {
+                    res.render('error_page', {message: "Przepraszamy, w tym czasie wybrany pojazd jest niedostępny. Spróbuj innego terminu"});
+                    return;
+                }
+
+                if (endDate.getTime() >= sDate.getTime() && endDate.getTime() <= eEDate.getTime()) {
+                    res.render('error_page', {message: "Przepraszamy, w tym czasie wybrany pojazd jest niedostępny. Spróbuj innego terminu"});
+                    return;
+                }
             }
 
-            ReservationModel
-                .findAll()
-                .then(reservations => {
-                    res.render('car_details', {title: "Szczegóły pojazdu", car: car[0]})
-
+            CarsModel
+                .findAll({
+                    where: {id: carId}
                 })
-                .catch(error => {
+                .then(cars => {
+                    if (cars.length !== 1) {
+                        res.render('error_page', {message: "Nie znaleziono pojazdu o id: " + carId});
+                        return;
+                    }
 
+                    let car = cars[0];
+
+                    ReservationModel
+                        .create({
+                            start: startDate.getTime(),
+                            end: endDate.getTime(),
+                            price: car.dataValues.price * days,
+                            clientId: userId,
+                            carId: carId
+                        })
+                        .then(value => {
+                            res.redirect("/reservations")
+                        })
+                        .catch(reason => {
+                            res.render('error_page', {message: reason.message})
+                        });
+                })
+                .catch(reason => {
+                    res.render('error_page', {message: reason.message})
                 });
-
         })
         .catch(reason => {
             res.render('error_page', {message: reason.message})
-        })
+        });
 });
 
 module.exports = router;
