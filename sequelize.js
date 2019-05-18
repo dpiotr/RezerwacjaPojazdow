@@ -62,9 +62,9 @@ sequelize.sync({force: true})
         Client.create({name: "Adam", surname: "Nowak", login: "adamnowak", password: "adamnowak"});
         Client.create({name: "Jan", surname: "Kowalski", login: "jankowalski", password: "jankowalski"});
 
-        Reservation.create({start: 7979468400, end: 7979641200, clientId: 1, carId: 1});
-        Reservation.create({start: 7979814000, end: 7980073200, clientId: 1, carId: 1});
-        Reservation.create({start: 7979814000, end: 7980073200, clientId: 2, carId: 2});
+        Reservation.create({start: 7979468400, end: 7979641200, price: 300, clientId: 1, carId: 1});
+        Reservation.create({start: 7979814000, end: 7980073200, price: 100, clientId: 1, carId: 1});
+        Reservation.create({start: 7979814000, end: 7980073200, price: 1000, clientId: 2, carId: 2});
 
         User.create({login: "piotr", password: "dunaj"});
     })

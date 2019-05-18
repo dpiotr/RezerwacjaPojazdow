@@ -1,0 +1,10 @@
+extends layout
+
+block content
+    h2= title
+    h6 Id rezerwacji: #{reservation.id}
+    h6 Pojazd: #{reservation.car}
+    h6 Numer rejestracyjny: #{reservation.registration_no}
+    h6 Okres: #{reservation.period}
+    h6 Cena: #{reservation.price}
+    img(width="600px", height="350px", src=reservation.image)
