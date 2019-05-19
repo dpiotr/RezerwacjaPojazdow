@@ -47,10 +47,9 @@ passport.use('localClient', new LocalStrategy(
                     return cb(null, false);
                 }
 
-                //TODO
-                // if (user.password != password) {
-                //     return cb(null, false);
-                // }
+                if (users[0].password !== password) {
+                    return cb(null, false);
+                }
 
                 return cb(null, users[0]);
             })
@@ -73,10 +72,9 @@ passport.use('localUser', new LocalStrategy(
                     return cb(null, false);
                 }
 
-                //TODO
-                // if (user.password != password) {
-                //     return cb(null, false);
-                // }
+                if (users[0].password !== password) {
+                    return cb(null, false);
+                }
 
                 return cb(null, users[0]);
             })
