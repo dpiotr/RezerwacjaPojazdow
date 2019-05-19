@@ -165,8 +165,85 @@ router.get('/:id([0-9]+)/remove', LoginValidator, function (req, res, next) {
 
 router.get('/:id([0-9]+)/edit', LoginValidator, function (req, res, next) {
     let reservationId = req.params.id;
+    let userId = req.user.dataValues.id;
 
+    ReservationModel
+        .findAll({
+            where: {
+                id: reservationId
+            }
+        })
+        .then(reservations => {
+            if (reservations.length !== 1) {
+                res.render('error_page', {message: "Wystąpił bład przy pobieraniu rezerwacji."})
+            }
 
+            let reservation = reservations[0];
+
+            let clientId = reservation.clientId;
+            let startDate = new Date(reservation.start);
+            let endDate = new Date(reservation.end);
+            let currentDate = new Date();
+            let carId = reservation.carId;
+            let price = reservation.price;
+
+            if (clientId !== userId) {
+                res.render('error_page', {message: "Nie możesz modyfikować rezerwacji która nie została przez Ciebie stworzona."})
+            }
+
+            if (endDate.getTime() <= currentDate.getTime()) {
+                res.render('error_page', {message: "Nie moge modyfikować rezerwacji ktora zakonczyla sie w przeszlosci"});
+                return;
+            }
+
+            if (currentDate.getTime() >= startDate.getTime() && currentDate.getTime() <= endDate.getTime()) {
+                res.render('error_page', {message: "Nie moge modyfikować rezerwacji ktora trwa"});
+                return;
+            }
+
+            CarsModel
+                .findAll({
+                    where: {
+                        id: carId
+                    },
+                    include:
+                        [
+                            {
+                                model: ModelModel,
+                                include: [
+                                    BrandModel
+                                ]
+                            }
+                        ]
+                })
+                .then(cars => {
+                    if (cars.length !== 1) {
+                        res.render('error_page', {message: "Wystąpił błąd z pobieraniem pojazdu."})
+                    }
+
+                    let car = cars[0];
+
+                    res.render('reservation_modify', {
+                        reservation: {
+                            car: car.dataValues.model.dataValues.brand.dataValues.name + " " + car.dataValues.model.dataValues.name,
+                            image: car.dataValues.image,
+                            registration_no: car.dataValues.registration_no,
+                            start: startDate.getFullYear() + "-" + (startDate.getMonth() + 1) + "-" + startDate.getDate(),
+                            end: endDate.getFullYear() + "-" + (endDate.getMonth() + 1) + "-" + endDate.getDate(),
+                            period: startDate.getDate() + "." + (startDate.getMonth() + 1) + "." + startDate.getFullYear() + " - " + endDate.getDate() + "." + (endDate.getMonth() + 1) + "." + endDate.getFullYear(),
+                            id: reservation.id,
+                            carId: car.id,
+                            price: price
+                        }
+                    })
+                })
+                .catch(reason => {
+                    res.render('error_page', {message: reason.message})
+                });
+        })
+        .catch(reason => {
+            res.render('error_page', {message: reason.message})
+        })
 });
 
 router.post('/', LoginValidator, function (req, res, next) {
@@ -188,7 +265,7 @@ router.post('/', LoginValidator, function (req, res, next) {
             }
         })
         .then(reservations => {
-            for (i in reservations) {
+            for (let i in reservations) {
                 let r = reservations[i];
 
                 let sDate = new Date(r.dataValues.start);
@@ -226,6 +303,86 @@ router.post('/', LoginValidator, function (req, res, next) {
                             clientId: userId,
                             carId: carId
                         })
+                        .then(value => {
+                            res.redirect("/reservations")
+                        })
+                        .catch(reason => {
+                            res.render('error_page', {message: reason.message})
+                        });
+                })
+                .catch(reason => {
+                    res.render('error_page', {message: reason.message})
+                });
+        })
+        .catch(reason => {
+            res.render('error_page', {message: reason.message})
+        });
+});
+
+router.post('/:id([0-9]+)/edit', LoginValidator, function (req, res, next) {
+    const oneDay = 24 * 60 * 60 * 1000;
+
+    let userId = req.user.dataValues.id;
+    let reservationId = req.params.id;
+
+    let carId = req.body.carId;
+    let startDate = new Date(req.body.startDate);
+    let endDate = new Date(req.body.endDate);
+    let endEndDate = new Date(endDate.getTime() + oneDay - 1);
+
+    let days = Math.round(Math.abs((startDate.getTime() - endDate.getTime()) / (oneDay))) + 1;
+
+    ReservationModel
+        .findAll({
+            where: {
+                carId: carId
+            }
+        })
+        .then(reservations => {
+            for (let i in reservations) {
+                let r = reservations[i];
+
+                if (r.id.toString() === reservationId.toString()) {
+                    continue;
+                }
+
+                let sDate = new Date(r.dataValues.start);
+                let eDate = new Date(r.dataValues.end);
+                let eEDate = new Date(eDate.getTime() + oneDay - 1);
+
+                if (startDate.getTime() >= sDate.getTime() && startDate.getTime() <= eEDate.getTime()) {
+                    res.render('error_page', {message: "Przepraszamy, w tym czasie wybrany pojazd jest niedostępny. Spróbuj innego terminu"});
+                    return;
+                }
+
+                if (endDate.getTime() >= sDate.getTime() && endDate.getTime() <= eEDate.getTime()) {
+                    res.render('error_page', {message: "Przepraszamy, w tym czasie wybrany pojazd jest niedostępny. Spróbuj innego terminu"});
+                    return;
+                }
+            }
+
+            CarsModel
+                .findAll({
+                    where: {id: carId}
+                })
+                .then(cars => {
+                    if (cars.length !== 1) {
+                        res.render('error_page', {message: "Nie znaleziono pojazdu o id: " + carId});
+                        return;
+                    }
+
+                    let car = cars[0];
+
+                    ReservationModel
+                        .update(
+                            {
+                                start: startDate.getTime(),
+                                end: endDate.getTime(),
+                                price: car.dataValues.price * days,
+                            },
+                            {
+                                where: {id: reservationId}
+                            })
                         .then(value => {
                             res.redirect("/reservations")
                         })

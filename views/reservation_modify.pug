@@ -1,0 +1,23 @@
+extends layout
+
+block content
+    script(src="/javascripts/reservations.js")
+    h2= title
+    br
+    h6 Modyfikujesz rezerwacje o  numerze #{reservation.id} na pojazd #{reservation.car} o numerze rejestracyjnym #{reservation.registration_no} (#{reservation.price} zł/doba)
+    form(method="post", name="reservationForm" action="/reservations/" + reservation.id + "/edit" onsubmit="validateReservation(); return false;")
+        | Start:
+        br
+        input(type='date', id="startDate", name='startDate' value=reservation.start onchange='dateChanged(' + reservation.price + ')')
+        br
+        | Koniec:
+        br
+        input(type='date', id="endDate", name='endDate' value=reservation.end onchange='dateChanged(' + reservation.price + ')')
+        br
+        br
+        input(type='hidden', name='carId', value=reservation.carId)
+        input(type='submit', value="Rezerwuj")
+    br
+    br
+    h6 Cena za wybrany okres:
+    input(type='text', id="price", name='price' value=reservation.price disabled)
