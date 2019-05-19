@@ -111,6 +111,7 @@ router.get('/:id([0-9]+)', LoginValidator, function (req, res, next) {
 
 router.get('/:id([0-9]+)/remove', LoginValidator, function (req, res, next) {
     let reservationId = req.params.id;
+    let userId = req.user.dataValues.id;
 
     ReservationModel
         .findAll({
@@ -125,9 +126,14 @@ router.get('/:id([0-9]+)/remove', LoginValidator, function (req, res, next) {
 
             let reservation = reservations[0];
 
+            let clientId = reservation.clientId;
             let startDate = new Date(reservation.start);
             let endDate = new Date(reservation.end);
             let currentDate = new Date();
+
+            if (clientId !== userId) {
+                res.render('error_page', {message: "Nie możesz usunąć rezerwacji która nie została przez Ciebie stworzona."})
+            }
 
             if (endDate.getTime() <= currentDate.getTime()) {
                 res.render('error_page', {message: "Nie moge usunac rezerwacji ktora zakonczyla sie w przeszlosci"});
