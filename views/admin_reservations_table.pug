@@ -1,0 +1,13 @@
+extends layout
+
+block content
+    h2= title
+    table.table.table-hover
+        tbody
+            each reservation in reservations
+                tr
+                    td=reservation.id
+                    td=reservation.start
+                    td=reservation.end
+                    td
+                        a(href="reservations/" + reservation.id) Szczegóły

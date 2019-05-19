@@ -66,7 +66,7 @@ sequelize.sync({force: true})
         Reservation.create({start: 1558051200000, end: 1558310400000, price: 300, clientId: 1, carId: 1});
         Reservation.create({start: 7979468400000, end: 7979641200000, price: 300, clientId: 1, carId: 1});
         Reservation.create({start: 7979814000000, end: 7980073200000, price: 100, clientId: 1, carId: 1});
-        Reservation.create({start: 7979814000000, end: 7980073200000, price: 1000, clientId: 2, carId: 2});
+        // Reservation.create({start: 7979814000000, end: 7980073200000, price: 1000, clientId: 2, carId: 2});
 
         User.create({login: "piotr", password: "dunaj"});
     })

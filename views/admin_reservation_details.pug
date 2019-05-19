@@ -1,0 +1,14 @@
+extends layout
+
+block content
+    h2= title
+    p
+        a(href="/administration/reservations/" + reservation.id + "/edit") Modyfikuj&nbsp;
+        a(href="/administration/reservations/" + reservation.id + "/remove") Usuń
+    h6 Id rezerwacji: #{reservation.id}
+    h6 Id klienta: #{reservation.clientId}
+    h6 Pojazd: #{reservation.car}
+    h6 Numer rejestracyjny: #{reservation.registration_no}
+    h6 Okres: #{reservation.period}
+    h6 Cena: #{reservation.price}
+    img(width="600px", height="350px", src=reservation.image)
