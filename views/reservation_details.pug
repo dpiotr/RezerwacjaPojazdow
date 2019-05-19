@@ -2,6 +2,9 @@ extends layout
 
 block content
     h2= title
+    p
+        a(href="/reservations/" + reservation.id + "/edit") Modyfikuj&nbsp;
+        a(href="/reservations/" + reservation.id + "/remove") Usuń
     h6 Id rezerwacji: #{reservation.id}
     h6 Pojazd: #{reservation.car}
     h6 Numer rejestracyjny: #{reservation.registration_no}

@@ -109,6 +109,60 @@ router.get('/:id([0-9]+)', LoginValidator, function (req, res, next) {
         })
 });
 
+router.get('/:id([0-9]+)/remove', LoginValidator, function (req, res, next) {
+    let reservationId = req.params.id;
+
+    ReservationModel
+        .findAll({
+            where: {
+                id: reservationId
+            }
+        })
+        .then(reservations => {
+            if (reservations.length !== 1) {
+                res.render('error_page', {message: "Wystąpił błąd z pobieraniem rezerwacji."})
+            }
+
+            let reservation = reservations[0];
+
+            let startDate = new Date(reservation.start);
+            let endDate = new Date(reservation.end);
+            let currentDate = new Date();
+
+            if (endDate.getTime() <= currentDate.getTime()) {
+                res.render('error_page', {message: "Nie moge usunac rezerwacji ktora zakonczyla sie w przeszlosci"});
+                return;
+            }
+
+            if (currentDate.getTime() >= startDate.getTime() && currentDate.getTime() <= endDate.getTime()) {
+                res.render('error_page', {message: "Nie moge usunac rezerwacji ktora trwa"});
+                return;
+            }
+
+            ReservationModel
+                .destroy({
+                    where: {
+                        id: reservationId
+                    }
+                })
+                .then(data => {
+                    res.redirect("/reservations");
+                })
+                .catch(reason => {
+                    res.render('error_page', {message: reason.message});
+                });
+        })
+        .catch(reason => {
+            res.render('error_page', {message: reason.message})
+        })
+});
+
+router.get('/:id([0-9]+)/edit', LoginValidator, function (req, res, next) {
+    let reservationId = req.params.id;
+
+
+});
+
 router.post('/', LoginValidator, function (req, res, next) {
     const oneDay = 24 * 60 * 60 * 1000;
 
