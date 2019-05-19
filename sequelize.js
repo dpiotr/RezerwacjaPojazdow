@@ -59,8 +59,8 @@ sequelize.sync({force: true})
             }
         );
 
-        Client.create({name: "Adam", surname: "Nowak", login: "adamnowak", password: "adamnowak"});
-        Client.create({name: "Jan", surname: "Kowalski", login: "jankowalski", password: "jankowalski"});
+        Client.create({name: "Adam", surname: "Nowak", login: "adamnowak", password: "$2b$10$/FdHTx9XiiJsn0OBzZ9BreB8P9iXNAGFrKKvjStVg7B0iZfV0yGZy"});
+        Client.create({name: "Jan", surname: "Kowalski", login: "jankowalski", password: "$2b$10$1e9aqb5jwG7su6vuFn394Ox.ovRdlObmXmAmO2yZ3O63vHRBXw5di"});
 
         Reservation.create({start: 1556668800000, end: 1557446400000, price: 300, clientId: 1, carId: 1});
         Reservation.create({start: 1558051200000, end: 1558310400000, price: 300, clientId: 1, carId: 1});
@@ -68,7 +68,7 @@ sequelize.sync({force: true})
         Reservation.create({start: 7979814000000, end: 7980073200000, price: 100, clientId: 1, carId: 1});
         // Reservation.create({start: 7979814000000, end: 7980073200000, price: 1000, clientId: 2, carId: 2});
 
-        User.create({login: "piotr", password: "dunaj"});
+        User.create({login: "piotr", password: "$2b$10$t5vkzMWHGATnrdedpajI/OHn5MIoNAdlK5fLLVwkVw61u/MNzFOf6"});
     })
     .catch(reason => console.log("Wystapil blad: " + reason.message));
 

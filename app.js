@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var bcrypt = require('bcrypt');
 
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
@@ -47,7 +48,9 @@ passport.use('localClient', new LocalStrategy(
                     return cb(null, false);
                 }
 
-                if (users[0].password !== password) {
+                let hash = bcrypt.hashSync(password, 10);
+
+                if (bcrypt.compareSync(users[0].password, hash)) {
                     return cb(null, false);
                 }
 
@@ -72,7 +75,9 @@ passport.use('localUser', new LocalStrategy(
                     return cb(null, false);
                 }
 
-                if (users[0].password !== password) {
+                let hash = bcrypt.hashSync(password, 10);
+
+                if (bcrypt.compareSync(users[0].password, hash)) {
                     return cb(null, false);
                 }
 

@@ -1,5 +1,6 @@
 let express = require('express');
 let passport = require('passport');
+let bcrypt = require('bcrypt');
 
 let ClientModel = require('../sequelize').Client;
 
@@ -58,13 +59,15 @@ router.post('/register', function (req, res) {
         return;
     }
 
+    let hash = bcrypt.hashSync(password, 10);
+
     ClientModel
         .create(
             {
                 name: name,
                 surname: surname,
                 login: login,
-                password: password
+                password: hash
             }
         )
         .then(user => {
